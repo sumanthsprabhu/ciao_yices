@@ -98,8 +98,9 @@
 :- true pred yices_formula_true_in_model(in(_),in(_),go(TF)) ::
 		address * int * int + (foreign, returns(TF)).	
 		
+:- include(.(ciao_yices_config_auto)).
 
-:- use_foreign_library(yices). 	% library is in /usr/local/lib
+:- use_foreign_library(yices).
 
 yices_context(Ctx) :-
 	null(Null),
