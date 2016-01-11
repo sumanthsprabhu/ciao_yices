@@ -49,7 +49,6 @@ ciao_yices_desc := [
 aux_sh := ~fsR(bundle_src(ciao_yices)/'Manifest'/'gen-conf.sh').
 
 aux_call(Args) :- 
-	display(a), nl,
 	OS = ~get_bundle_flag(core:os),
 	Arch = ~get_bundle_flag(core:arch),
 	Env = ['CIAO_OS'=OS, 'CIAO_ARCH'=Arch],
