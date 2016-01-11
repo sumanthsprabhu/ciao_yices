@@ -43,10 +43,16 @@ ciao_yices_desc := [
 % ---------------------------------------------------------------------------
 % (call external scripts and makefiles)
 
+:- use_module(library(bundle/bundle_flags), [get_bundle_flag/2]).
+
 % (will not work in Windows)
 aux_sh := ~fsR(bundle_src(ciao_yices)/'Manifest'/'gen-conf.sh').
 
 aux_call(Args) :- 
-	process_call(~aux_sh, Args, []).
+	display(a), nl,
+	OS = ~get_bundle_flag(core:os),
+	Arch = ~get_bundle_flag(core:arch),
+	Env = ['CIAO_OS'=OS, 'CIAO_ARCH'=Arch],
+	process_call(~aux_sh, Args, [env(Env)]).
 
 

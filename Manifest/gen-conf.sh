@@ -19,29 +19,21 @@ yices_url="http://yices.csl.sri.com/cgi-bin/yices2-newnewdownload.cgi?file=$yice
 
 # ---------------------------------------------------------------------------
 
-if ciaoroot=`which ciao`; then
-    ciaoroot=$(dirname $(dirname $(dirname "$ciaoroot")))
-else
-    echo "ERROR: No ciao installation in path" 1>&2
-    exit 1
-fi
-# Detect the OS/ARCH at configuration
-eng_cfg=`. "$ciaoroot"/build/ciao.config_saved_sh; echo $core__OS$core__ARCH`
-# cat "$ciaoroot"/build/eng/ciaoengine/cfg/"$eng_cfg"/config_sh
-
 # Default compiler
-case "$eng_cfg" in
+case "$CIAO_OS" in
     LINUX*)  CXX="g++" ;;
     DARWIN*) CXX="clang++" ;;
     *)
-	echo "ERROR: Unsupported $eng_cfg" 1>&2
+	echo "ERROR: Unsupported CIAO_OS=$CIAO_OS" 1>&2
 	exit 1
 esac
-case "$eng_cfg" in
+case "$CIAO_ARCH" in
     *i686)   CXXFLAGS="-m32" ;;
     *x86_64) CXXFLAGS="" ;;
+    *)
+	echo "ERROR: Unsupported CIAO_ARCH=$CIAO_ARCH" 1>&2
+	exit 1
 esac
-CIAO_INCLUDE="$ciaoroot/build/eng/ciaoengine/include"
 
 # --------------------------------------------------------------------------
 
