@@ -23,8 +23,7 @@
 			yices_get_int32_value/4,
 			yices_get_term_by_name/2,
 			yices_get_value_as_term/3,
-			yices_formula_true_in_model/3,
-			yices_term_to_string/5
+			yices_formula_true_in_model/3
             ]).
 
 :- use_package([
