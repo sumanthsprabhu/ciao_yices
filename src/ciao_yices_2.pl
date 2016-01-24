@@ -17,6 +17,7 @@
 			yices_declare_int/1,
 			yices_declare_bool/1,
 			yices_term_is_bool/2,
+			yices_term_to_string/5,
 			yices_error_string/1,
 			yices_get_model/3,
 			yices_get_int32_value/4,
@@ -80,9 +81,10 @@
 :- true pred yices_term_is_bool(in(_),go(B)) ::
 		int * int + (foreign, returns(B)).	
 		
-:- true pred yices_term_to_string(in(_),in(_), in(_),in(_), go(TF)) ::
-                int * int* int * int* string + (foreign, returns(TF)).
-		
+:- true pred yices_term_to_string(in(T),in(Width), in(Height), in(Offset), go(TF)) ::
+	int * int * int * int* string + (foreign, returns(TF))
+   # "Converts a term to a string".
+
 :- true pred yices_error_string(go(E)) ::
 		string + (foreign, returns(E)).		
 			

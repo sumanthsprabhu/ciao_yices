@@ -4,6 +4,10 @@
 :- use_module(library(strings)).
 
 main :-
+	test1,
+	test2.
+
+test1 :-
 	yices_init,
 	yices_context(Ctx),
 	yices_declare_real("x"),
@@ -37,6 +41,17 @@ main :-
 	yices_free_context(Ctx),
 	yices_exit.
   
+test2 :-
+	yices_init,
+	yices_context(Ctx),
+	yices_declare_real("x"),
+	yices_declare_real("y"),
+	yices_parse_term("(= (+ x y) 0)",T1),
+	yices_term_to_string(T1, 1000000, 1, 0, T1Str),
+	format("T1 = ~s~n", T1Str),
+	yices_free_context(Ctx),
+	yices_exit.
+
 reportError(S) :-
 	S<0 -> reportErrorState; true.
 	
