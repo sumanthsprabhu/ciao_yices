@@ -80,6 +80,9 @@
 :- true pred yices_term_is_bool(in(_),go(B)) ::
 		int * int + (foreign, returns(B)).	
 		
+:- true pred yices_term_to_string(in(_),in(_), in(_),in(_), go(TF)) ::
+                int * int* int * int* string + (foreign, returns(TF)).
+		
 :- true pred yices_error_string(go(E)) ::
 		string + (foreign, returns(E)).		
 			
@@ -97,7 +100,7 @@
 		
 :- true pred yices_formula_true_in_model(in(_),in(_),go(TF)) ::
 		address * int * int + (foreign, returns(TF)).	
-		
+
 :- include(.(ciao_yices_config_auto)).
 
 :- use_foreign_library(yices).
