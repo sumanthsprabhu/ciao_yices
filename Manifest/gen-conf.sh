@@ -105,7 +105,7 @@ function gen_config_auto() {
     local RPATH=
     case "$CIAO_OS" in
 	LINUX)
-	    RPATH="-Wl,-rpath,$storedir/$yices_name/lib"
+	    RPATH="-Wl,-rpath,$storedir/$yices_name/lib,-rpath,\\'\$ORIGIN\\'"
 	    ;;
     esac
     cat > $bdlroot/src/ciao_yices_config_auto.pl <<EOF
