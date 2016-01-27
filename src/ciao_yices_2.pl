@@ -33,8 +33,17 @@
         foreign_interface
 ]).
 
+:- foreign_inline("
+#include <yices.h>
+").
+
 :- true pred yices_version(go(V)) :: 
- 		string + (foreign, returns(V)).
+	string + (foreign(ciao_yices_version), returns(V), do_not_free(V)).
+:- foreign_inline(ciao_yices_version/1, "
+const char *ciao_yices_version() {
+  return yices_version;
+}
+").
  		
 :- true pred yices_init + foreign.
 
@@ -42,66 +51,66 @@
 
 :- true pred yices_reset + foreign.
  		
-:- true pred yices_new_context(in(_),go(Ctx)) :: 
+:- true pred yices_new_context(in(Config),go(Ctx)) :: 
  		address * address + (foreign, returns(Ctx)).
  		
-:- true pred yices_free_context(in(_)) :: 
+:- true pred yices_free_context(in(Ctx)) :: 
  		address + foreign.
  		
-:- true pred yices_set_term_name(in(_),in(_),go(TermIndex)) :: 
- 		int * string * int + (foreign, returns(TermIndex)).
+:- true pred yices_set_term_name(in(T),in(Name),go(TermIndex)) :: 
+ 		c_int32 * string * c_int32 + (foreign, returns(TermIndex)).
  		              
-:- true pred yices_parse_term(in(_),go(TermIndex)) :: 
- 		string * int + (foreign, returns(TermIndex)).
+:- true pred yices_parse_term(in(S),go(TermIndex)) :: 
+ 		string * c_int32 + (foreign, returns(TermIndex)).
  		
-:- true pred yices_assert_formula(in(_),in(_), go(Status)) :: 
- 		address * int * int + (foreign, returns(Status)).
+:- true pred yices_assert_formula(in(Ctx),in(T), go(Status)) :: 
+ 		address * c_int32 * c_int32 + (foreign, returns(Status)).
  		
-:- true pred yices_check_context(in(_),in(_),go(Sat)) :: 
- 		address * address * int + (foreign, returns(Sat)).
+:- true pred yices_check_context(in(Ctx),in(Params),go(Sat)) :: 
+ 		address * address * c_int32 + (foreign, returns(Sat)).
  		
-:- true pred yices_context_status(in(_),go(Status)) :: 
- 		address * int + (foreign, returns(Status)).
+:- true pred yices_context_status(in(Ctx),go(Status)) :: 
+ 		address * c_int32 + (foreign, returns(Status)).
  		
-:- true pred yices_new_uninterpreted_term(in(_),go(V)) ::
-		address * int + (foreign, returns(V)).	
+:- true pred yices_new_uninterpreted_term(in(Tau),go(V)) ::
+		c_int32 * c_int32 + (foreign, returns(V)).
 		
-:- true pred yices_new_variable(in(_),go(V)) ::
-		address * int + (foreign, returns(V)).		  
+:- true pred yices_new_variable(in(Tau),go(V)) ::
+		c_int32 * c_int32 + (foreign, returns(V)).
 		
 :- true pred yices_real_type(go(Real)) ::
-		address + (foreign, returns(Real)).	
+		c_int32 + (foreign, returns(Real)).
 	
 :- true pred yices_int_type(go(Int)) ::
-		address + (foreign, returns(Int)).	
+		c_int32 + (foreign, returns(Int)).
 		
 :- true pred yices_bool_type(go(Bool)) ::
-		address + (foreign, returns(Bool)).	
+		c_int32 + (foreign, returns(Bool)).	
 		
-:- true pred yices_term_is_bool(in(_),go(B)) ::
-		int * int + (foreign, returns(B)).	
+:- true pred yices_term_is_bool(in(T),go(B)) ::
+		c_int32 * c_int32 + (foreign, returns(B)).	
 		
 :- true pred yices_term_to_string(in(T),in(Width), in(Height), in(Offset), go(TF)) ::
-	int * int * int * int* string + (foreign, returns(TF))
+	c_int32 * c_uint32 * c_uint32 * c_uint32 * string + (foreign, returns(TF))
    # "Converts a term to a string".
 
 :- true pred yices_error_string(go(E)) ::
 		string + (foreign, returns(E)).		
 			
-:- true pred yices_get_model(in(_),in(_),go(Model)) ::
-		address * int * address + (foreign, returns(Model)).
+:- true pred yices_get_model(in(Ctx),in(KeepSubst),go(Model)) ::
+		address * c_int32 * address + (foreign, returns(Model)).
 		
-:- true pred yices_get_int32_value(in(_),in(_),in(_),go(Status)) ::
-		address * int * int * int + (foreign, returns(Status)).	
+:- true pred yices_get_int32_value(in(Model),in(T),go(Val),go(Status)) ::
+		address * c_int32 * c_int32 * c_int32 + (foreign, returns(Status)).	
 		
-:- true pred yices_get_term_by_name(in(_),go(Term)) ::
-		string * int + (foreign, returns(Term)).
+:- true pred yices_get_term_by_name(in(Name),go(Term)) ::
+		string * c_int32 + (foreign, returns(Term)).
 		
-:- true pred yices_get_value_as_term(in(_),in(_),go(Term)) ::
-		address * int * int + (foreign, returns(Term)).	
+:- true pred yices_get_value_as_term(in(Model),in(T),go(Term)) ::
+		address * c_int32 * c_int32 + (foreign, returns(Term)).	
 		
-:- true pred yices_formula_true_in_model(in(_),in(_),go(TF)) ::
-		address * int * int + (foreign, returns(TF)).	
+:- true pred yices_formula_true_in_model(in(Model),in(F),go(TF)) ::
+		address * c_int32 * c_int32 + (foreign, returns(TF)).	
 
 :- include(.(ciao_yices_config_auto)).
 

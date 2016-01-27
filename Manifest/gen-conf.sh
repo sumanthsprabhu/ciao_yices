@@ -109,6 +109,10 @@ function gen_config_auto() {
 	    ;;
     esac
     cat > $bdlroot/src/ciao_yices_config_auto.pl <<EOF
+:- extra_compiler_opts([
+	% For Yices
+	'-I$storedir/$yices_name/include'
+	]).
 :- extra_linker_opts(' -L.').
 :- extra_linker_opts([
 	% For Yices
