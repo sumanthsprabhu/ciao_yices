@@ -13,61 +13,77 @@ old_dir=`pwd`; cd "$_base/.."; bdlroot=`pwd`; cd "$old_dir"; old_dir=
 # Configuration
 
 yices_name="yices-2.4.2"
-# TODO: Allow compilation from source
-case "$CIAO_OS" in
-    LINUX)
-	yices_file="$yices_name""-x86_64-unknown-linux-gnu-static-gmp.tar.gz" ;;
-    DARWIN)
-	yices_file="$yices_name""-x86_64-apple-darwin15.2.0-static-gmp.tar.gz" ;;
-    *)
-	echo "ERROR: Unsupported CIAO_OS=$CIAO_OS" 1>&2
-	exit 1
-esac
-yices_url="http://yices.csl.sri.com/cgi-bin/yices2-newnewdownload.cgi?file=$yices_file&accept=I+Agree"
 
-# ---------------------------------------------------------------------------
+function select_bin_dist() {
+    case "$CIAO_OS" in
+	LINUX)
+	    yices_file="$yices_name""-x86_64-unknown-linux-gnu-static-gmp.tar.gz" ;;
+	DARWIN)
+	    yices_file="$yices_name""-x86_64-apple-darwin15.2.0-static-gmp.tar.gz" ;;
+	*)
+	    echo "ERROR: Unsupported CIAO_OS=$CIAO_OS" 1>&2
+	    exit 1
+    esac
+}
 
-# Default compiler
-case "$CIAO_OS" in
-    LINUX)  CXX="g++" ;;
-    DARWIN) CXX="clang++" ;;
-    *)
-	echo "ERROR: Unsupported CIAO_OS=$CIAO_OS" 1>&2
-	exit 1
-esac
-case "$CIAO_ARCH" in
-    i686)   CXXFLAGS="-m32" ;;
-    x86_64) CXXFLAGS="" ;;
-    *)
-	echo "ERROR: Unsupported CIAO_ARCH=$CIAO_ARCH" 1>&2
-	exit 1
-esac
+function select_src_dist() {
+    yices_file="yices-2.4.2-src.tar.gz"
+}
 
 # --------------------------------------------------------------------------
 
-cachedir="$bdlroot/third-party/cache"
-storedir="$bdlroot/third-party/store"
+if [ "$THIRDPARTY" = "" ]; then
+    cat <<EOF
+ERROR: THIRDPARTY directory missing (use 'ciao build')
+EOF
+    exit 1
+fi
+
+cachedir="$THIRDPARTY/cache"
+storedir="$THIRDPARTY/store"
+srcdir="$THIRDPARTY/src"
 
 # --------------------------------------------------------------------------
 
 function fetch_yices() {
-    if [ -x "$storedir/$yices_name" ]; then
-	# echo "yices already downloaded" 1>&2
-	return 0
-    fi
-
     # Ensure that cachedir is created
     mkdir -p "$cachedir"
 
     # Download yices
     rm -f "$cachedir/$yices_file"
+    yices_url="http://yices.csl.sri.com/cgi-bin/yices2-newnewdownload.cgi?file=$yices_file&accept=I+Agree"
     curl "$yices_url" -o "$cachedir/$yices_file"
+}
 
+function uncompress_yices_bin() {
     # Cleanup storedir for yices and uncompress
     rm -rf "$storedir/$yices_name"
     mkdir -p "$storedir/$yices_name"
     tar -xz --strip-components 1 -f "$cachedir/$yices_file" -C "$storedir/$yices_name"
+}
 
+function uncompress_yices_src() {
+    # Cleanup srcdir for yices and uncompress
+    rm -rf "$srcdir/$yices_name"
+    mkdir -p "$srcdir/$yices_name"
+    tar -xz --strip-components 1 -f "$cachedir/$yices_file" -C "$srcdir/$yices_name"
+}
+
+function build_yices() {
+    pushd "$srcdir/$yices_name" > /dev/null 2>&1
+
+    LDFLAGS="-L$THIRDPARTY/lib" CPPFLAGS="-I$THIRDPARTY/include" LD_LIBRARY_PATH="$THIRDPARTY/lib" ./configure
+    make
+    
+    # Cleanup storedir for yices and copy
+    rm -rf "$storedir/$yices_name"
+    mkdir -p "$storedir/$yices_name"
+    cp -R "$srcdir/$yices_name/build/"*"/dist/"* "$storedir/$yices_name/"
+    
+    popd > /dev/null 2>&1
+}
+
+function fix_dylibs() {
     # TODO: We do not use install-yices, just link ourselves the lib
     local yiceslibVerN yiceslibN
     case "$CIAO_OS" in
@@ -125,8 +141,32 @@ EOF
 
 # ===========================================================================
 
+function install_dist() { # Mode=bin|src
+    if [ -x "$storedir/$yices_name" ]; then
+	# echo "yices already downloaded" 1>&2
+	return 0
+    fi
+
+    if [ "$1" = bin ]; then
+	select_bin_dist
+    else # src
+	select_src_dist
+    fi
+    fetch_yices
+    if [ "$1" = bin ]; then
+	uncompress_yices_bin
+    else # src
+	uncompress_yices_src
+	build_yices
+    fi
+    fix_dylibs
+}
+
+# ===========================================================================
+
 case $1 in
-    fetch) fetch_yices ;;
+    install_bin_dist) install_dist bin ;;
+    install_src_dist) install_dist src ;;
     gen_conf) gen_config_auto ;;
     *)
 	echo "ERROR: Unknown action" 1>&2
