@@ -1,37 +1,35 @@
-% Ciao Prolog foreign language interface for Yices 2.3.1
-% See http://yices.csl.sri.com/
-
 :- module(ciao_yices_2,[
-			yices_version/1,
-			yices_init/0,
-			yices_exit/0,
-			yices_reset/0,
-			yices_context/1,
-			yices_free_context/1,
-			yices_parse_term/2,
-			yices_assert_formula/3,
-			yices_check/2,
-			yices_context_status/2,
-			yices_status/2,
-			yices_declare_real/1,
-			yices_declare_int/1,
-			yices_declare_bool/1,
-			yices_term_is_bool/2,
-			yices_term_to_string/5,
-			yices_error_string/1,
-			yices_get_model/3,
-			yices_get_int32_value/4,
-			yices_get_term_by_name/2,
-			yices_get_value_as_term/3,
-			yices_formula_true_in_model/3
-            ]).
+	yices_version/1,
+	yices_init/0,
+	yices_exit/0,
+	yices_reset/0,
+	yices_context/1,
+	yices_free_context/1,
+	yices_parse_term/2,
+	yices_assert_formula/3,
+	yices_check/2,
+	yices_context_status/2,
+	yices_status/2,
+	yices_declare_real/1,
+	yices_declare_int/1,
+	yices_declare_bool/1,
+	yices_declare_function1/3,
+	yices_term_is_bool/2,
+	yices_term_to_string/5,
+	yices_error_string/1,
+	yices_get_model/3,
+	yices_get_int32_value/4,
+	yices_get_term_by_name/2,
+	yices_get_value_as_term/3,
+	yices_formula_true_in_model/3
+   ], [assertions,
+       basicmodes,
+       regtypes,
+       foreign_interface]).
 
-:- use_package([
-        assertions,
-        basicmodes,
-        regtypes,
-        foreign_interface
-]).
+% Ciao foreign language interface for Yices 2.3.1
+% See http://yices.csl.sri.com/
+% Pointer to the Yices manual: http://yices.csl.sri.com/papers/manual.pdf
 
 :- foreign_inline("
 #include <yices.h>
@@ -86,7 +84,11 @@ const char *ciao_yices_version() {
 		
 :- true pred yices_bool_type(go(Bool)) ::
 		c_int32 + (foreign, returns(Bool)).	
-		
+
+% Creates the unary function type (-> Tau1 Range)
+:- true pred yices_function_type1(in(Tau1), in(Range), go(Fun)) ::
+		c_int32 * c_int32 * c_int32 + (foreign, returns(Fun)).
+
 :- true pred yices_term_is_bool(in(T),go(B)) ::
 		c_int32 * c_int32 + (foreign, returns(B)).	
 		
@@ -126,23 +128,32 @@ yices_check(Ctx,StatusName) :-
 	status(Status,StatusName).
 	
 yices_declare_real(X) :-
-	yices_real_type(Real),
-	yices_new_uninterpreted_term(Real,V),
-	yices_set_term_name(V,X,Status),
-	(Status == 0 -> true; write('Failed to declare '),write(X),nl,fail). 
-	
+	yices_declare(real, X).
+
 yices_declare_int(X) :-
-	yices_int_type(Int),
-	yices_new_uninterpreted_term(Int,V),
-	yices_set_term_name(V,X,Status),
-	(Status == 0 -> true; write('Failed to declare '),write(X),nl,fail). 
-	
+	yices_declare(int, X).
+
 yices_declare_bool(X) :-
-	yices_bool_type(Bool),
-	yices_new_uninterpreted_term(Bool,V),
+	yices_declare(bool, X).
+ 
+yices_declare_function1(Tau1, Range, X) :-
+	yices_type(Tau1, Tau1T),
+	yices_type(Range, RangeT),
+	yices_declare(function1(Tau1T, RangeT), X).
+
+yices_declare(Tau, X) :-
+	yices_type(Tau, TauT),
+	yices_new_uninterpreted_term(TauT,V),
 	yices_set_term_name(V,X,Status),
-	(Status == 0 -> true; write('Failed to declare '),write(X),nl,fail). 
-	
+	( Status == 0 -> true
+	; throw(error(failed_to_declare(Tau, X), yices_declare/2))
+	).
+
+yices_type(bool, Tau) :- yices_bool_type(Tau).
+yices_type(int, Tau) :- yices_int_type(Tau).
+yices_type(real, Tau) :- yices_real_type(Tau).
+yices_type(function1(Tau1, Range), Tau) :- yices_function_type1(Tau1, Range, Tau).
+
 yices_status(Ctx,StatusName) :-
 	yices_context_status(Ctx,Status),
 	status(Status,StatusName).
