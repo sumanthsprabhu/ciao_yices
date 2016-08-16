@@ -1,12 +1,12 @@
-:- module(ciao_yices2_test,_).
+:- module(ciao_yices2_test, [], [assertions]).
 
 :- use_module(ciao_yices(ciao_yices_2)).
 :- use_module(library(strings)).
+:- use_module(library(format)).
+:- use_module(library(write)).
 
-main :-
-	test1,
-	test2.
-
+:- test test1/0.
+:- export(test1/0).
 test1 :-
 	yices_init,
 	yices_context(Ctx),
@@ -41,6 +41,8 @@ test1 :-
 	yices_free_context(Ctx),
 	yices_exit.
   
+:- test test2/0.
+:- export(test2/0).
 test2 :-
 	yices_init,
 	yices_context(Ctx),
