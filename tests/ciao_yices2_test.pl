@@ -1,8 +1,9 @@
 :- module(ciao_yices2_test, [], [assertions]).
 
 :- use_module(ciao_yices(ciao_yices_2)).
-:- use_module(library(strings)).
+:- use_module(library(stream_utils), [write_string/1]).
 :- use_module(library(format)).
+:- use_module(library(streams)).
 :- use_module(library(write)).
 
 :- test test1/0.

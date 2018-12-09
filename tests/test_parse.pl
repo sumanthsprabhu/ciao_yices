@@ -1,10 +1,10 @@
 :- module(test_parse,_).
 
+:- use_module(library(streams)).
 :- use_module(library(lists)).
-:- use_module(library(strings)).
 
-:-use_module(ciao_yices(ciao_yices_2)).
-:-use_module(library(format), [format/2]).
+:- use_module(ciao_yices(ciao_yices_2)).
+:- use_module(library(format), [format/2]).
 
 vars("x143").
 vars("x144").
