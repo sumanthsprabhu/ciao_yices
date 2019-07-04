@@ -5,6 +5,7 @@
 	yices_reset/0,
 	yices_context/1,
 	yices_free_context/1,
+	yices_reset_context/1,
 	yices_parse_term/2,
 	yices_assert_formula/3,
 	yices_check/2,
@@ -35,7 +36,7 @@
 #include <yices.h>
 ").
 
-:- trust pred yices_version(go(V)) :: 
+:- true pred yices_version(go(V)) :: 
 	string + (foreign(ciao_yices_version), returns(V), do_not_free(V)).
 :- foreign_inline(ciao_yices_version/1, "
 const char *ciao_yices_version() {
@@ -43,75 +44,78 @@ const char *ciao_yices_version() {
 }
 ").
  		
-:- trust pred yices_init + foreign.
+:- true pred yices_init + foreign.
 
-:- trust pred yices_exit + foreign.
+:- true pred yices_exit + foreign.
 
-:- trust pred yices_reset + foreign.
+:- true pred yices_reset + foreign.
  		
-:- trust pred yices_new_context(in(Config),go(Ctx)) :: 
+:- true pred yices_new_context(in(Config),go(Ctx)) :: 
  		address * address + (foreign, returns(Ctx)).
  		
-:- trust pred yices_free_context(in(Ctx)) :: 
+:- true pred yices_free_context(in(Ctx)) :: 
  		address + foreign.
  		
-:- trust pred yices_set_term_name(in(T),in(Name),go(TermIndex)) :: 
+:- true pred yices_reset_context(in(Ctx)) :: 
+ 		address + foreign.
+ 		
+:- true pred yices_set_term_name(in(T),in(Name),go(TermIndex)) :: 
  		c_int32 * string * c_int32 + (foreign, returns(TermIndex)).
  		              
-:- trust pred yices_parse_term(in(S),go(TermIndex)) :: 
+:- true pred yices_parse_term(in(S),go(TermIndex)) :: 
  		string * c_int32 + (foreign, returns(TermIndex)).
  		
-:- trust pred yices_assert_formula(in(Ctx),in(T), go(Status)) :: 
+:- true pred yices_assert_formula(in(Ctx),in(T), go(Status)) :: 
  		address * c_int32 * c_int32 + (foreign, returns(Status)).
  		
-:- trust pred yices_check_context(in(Ctx),in(Params),go(Sat)) :: 
+:- true pred yices_check_context(in(Ctx),in(Params),go(Sat)) :: 
  		address * address * c_int32 + (foreign, returns(Sat)).
  		
-:- trust pred yices_context_status(in(Ctx),go(Status)) :: 
+:- true pred yices_context_status(in(Ctx),go(Status)) :: 
  		address * c_int32 + (foreign, returns(Status)).
  		
-:- trust pred yices_new_uninterpreted_term(in(Tau),go(V)) ::
+:- true pred yices_new_uninterpreted_term(in(Tau),go(V)) ::
 		c_int32 * c_int32 + (foreign, returns(V)).
 		
-:- trust pred yices_new_variable(in(Tau),go(V)) ::
+:- true pred yices_new_variable(in(Tau),go(V)) ::
 		c_int32 * c_int32 + (foreign, returns(V)).
 		
-:- trust pred yices_real_type(go(Real)) ::
+:- true pred yices_real_type(go(Real)) ::
 		c_int32 + (foreign, returns(Real)).
 	
-:- trust pred yices_int_type(go(Int)) ::
+:- true pred yices_int_type(go(Int)) ::
 		c_int32 + (foreign, returns(Int)).
 		
-:- trust pred yices_bool_type(go(Bool)) ::
+:- true pred yices_bool_type(go(Bool)) ::
 		c_int32 + (foreign, returns(Bool)).	
 
 % Creates the unary function type (-> Tau1 Range)
-:- trust pred yices_function_type1(in(Tau1), in(Range), go(Fun)) ::
+:- true pred yices_function_type1(in(Tau1), in(Range), go(Fun)) ::
 		c_int32 * c_int32 * c_int32 + (foreign, returns(Fun)).
 
-:- trust pred yices_term_is_bool(in(T),go(B)) ::
+:- true pred yices_term_is_bool(in(T),go(B)) ::
 		c_int32 * c_int32 + (foreign, returns(B)).	
 		
-:- trust pred yices_term_to_string(in(T),in(Width), in(Height), in(Offset), go(TF)) ::
+:- true pred yices_term_to_string(in(T),in(Width), in(Height), in(Offset), go(TF)) ::
 	c_int32 * c_uint32 * c_uint32 * c_uint32 * string + (foreign, returns(TF))
    # "Converts a term to a string".
 
-:- trust pred yices_error_string(go(E)) ::
+:- true pred yices_error_string(go(E)) ::
 		string + (foreign, returns(E)).		
 			
-:- trust pred yices_get_model(in(Ctx),in(KeepSubst),go(Model)) ::
+:- true pred yices_get_model(in(Ctx),in(KeepSubst),go(Model)) ::
 		address * c_int32 * address + (foreign, returns(Model)).
 		
-:- trust pred yices_get_int32_value(in(Model),in(T),go(Val),go(Status)) ::
+:- true pred yices_get_int32_value(in(Model),in(T),go(Val),go(Status)) ::
 		address * c_int32 * c_int32 * c_int32 + (foreign, returns(Status)).	
 		
-:- trust pred yices_get_term_by_name(in(Name),go(Term)) ::
+:- true pred yices_get_term_by_name(in(Name),go(Term)) ::
 		string * c_int32 + (foreign, returns(Term)).
 		
-:- trust pred yices_get_value_as_term(in(Model),in(T),go(Term)) ::
+:- true pred yices_get_value_as_term(in(Model),in(T),go(Term)) ::
 		address * c_int32 * c_int32 + (foreign, returns(Term)).	
 		
-:- trust pred yices_formula_true_in_model(in(Model),in(F),go(TF)) ::
+:- true pred yices_formula_true_in_model(in(Model),in(F),go(TF)) ::
 		address * c_int32 * c_int32 + (foreign, returns(TF)).	
 
 :- include(.(ciao_yices_config_auto)).
