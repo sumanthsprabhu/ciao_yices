@@ -6,13 +6,13 @@ pkg_name="yices-2.4.2"
 # Origin for binary distribution
 function pkg_bin_origin() {
     case "$CIAO_OS" in
-	LINUX)
-	    pkg_tarfile="$pkg_name""-x86_64-unknown-linux-gnu-static-gmp.tar.gz" ;;
-	DARWIN)
-	    pkg_tarfile="$pkg_name""-x86_64-apple-darwin15.2.0-static-gmp.tar.gz" ;;
-	*)
-	    echo "ERROR: Unsupported CIAO_OS=$CIAO_OS" 1>&2
-	    exit 1
+        LINUX)
+            pkg_tarfile="$pkg_name""-x86_64-unknown-linux-gnu-static-gmp.tar.gz" ;;
+        DARWIN)
+            pkg_tarfile="$pkg_name""-x86_64-apple-darwin15.2.0-static-gmp.tar.gz" ;;
+        *)
+            echo "ERROR: Unsupported CIAO_OS=$CIAO_OS" 1>&2
+            exit 1
     esac
     pkg_url="http://yices.csl.sri.com/cgi-bin/yices2-newnewdownload.cgi?file=$pkg_tarfile&accept=I+Agree"
 }
@@ -44,12 +44,12 @@ function pkg_install() {
 pkg_lib=yices
 case "$CIAO_OS" in
     LINUX)
-	pkg_libfile="libyices.so.2.4.2"
-	pkg_libfileAct="libyices.so"
-	;;
+        pkg_libfile="libyices.so.2.4.2"
+        pkg_libfileAct="libyices.so"
+        ;;
     DARWIN)
-	pkg_libfile="libyices.2.dylib"
-	pkg_libfileAct="libyices.dylib"
-	;;
+        pkg_libfile="libyices.2.dylib"
+        pkg_libfileAct="libyices.dylib"
+        ;;
 esac
 
