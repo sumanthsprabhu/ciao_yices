@@ -1,7 +1,7 @@
 # 3rd-party package definition
 
 # Package name
-pkg_name="yices-2.4.2"
+pkg_name="yices-2.6.5"
 
 # Origin for binary distribution
 function pkg_bin_origin() {
@@ -14,13 +14,15 @@ function pkg_bin_origin() {
             echo "ERROR: Unsupported CIAO_OS=$CIAO_OS" 1>&2
             exit 1
     esac
-    pkg_url="http://yices.csl.sri.com/cgi-bin/yices2-newnewdownload.cgi?file=$pkg_tarfile&accept=I+Agree"
+    #pkg_url="http://yices.csl.sri.com/cgi-bin/yices2-newnewdownload.cgi?file=$pkg_tarfile&accept=I+Agree"
+    pkg_url="https://yices.csl.sri.com/releases/2.6.5/yices-2.6.5-x86_64-pc-linux-gnu-static-gmp.tar.gz"
 }
 
 # Origin for source distribution
 function pkg_src_origin() {
-    pkg_tarfile="yices-2.4.2-src.tar.gz"
-    pkg_url="http://yices.csl.sri.com/cgi-bin/yices2-newnewdownload.cgi?file=$pkg_tarfile&accept=I+Agree"
+    pkg_tarfile="yices-2.6.5-src.tar.gz"
+    #pkg_url="http://yices.csl.sri.com/cgi-bin/yices2-newnewdownload.cgi?file=$pkg_tarfile&accept=I+Agree"
+    pkg_url="https://yices.csl.sri.com/releases/2.6.5/yices-2.6.5-src.tar.gz"
 }
 
 # Fixes for binary distribution
@@ -44,7 +46,7 @@ function pkg_install() {
 pkg_lib=yices
 case "$CIAO_OS" in
     LINUX)
-        pkg_libfile="libyices.so.2.4.2"
+        pkg_libfile="libyices.so.2.6.5"
         pkg_libfileAct="libyices.so"
         ;;
     DARWIN)
