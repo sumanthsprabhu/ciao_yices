@@ -43,7 +43,7 @@ function pkg_build() {
 function pkg_install() {
     # NOTE: We do not use install-yices (our fix_dylib fixes dylib paths)
     #cp -R "$srcdir/$pkg_name/build/"*"/dist/"* "$storedir/$pkg_name/"
-    cp -R $YICES_PKG_DIR/build/"*"/dist/"* "$storedir/$pkg_name/"
+    cp -R "$YICES_PKG_DIR/build/"*"/dist/"* "$storedir/$pkg_name/"
 }
 
 # Dynamic library name and files
