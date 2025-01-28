@@ -43,6 +43,7 @@ function pkg_build() {
 function pkg_install() {
     # NOTE: We do not use install-yices (our fix_dylib fixes dylib paths)
     #cp -R "$srcdir/$pkg_name/build/"*"/dist/"* "$storedir/$pkg_name/"
+    echo "STORE DIR is: $storedir"
     cp -R "$YICES_PKG_DIR/build/"*"/dist/"* "$storedir/$pkg_name/"
 }
 
